@@ -1,3 +1,7 @@
+This repo is not offical repository.
+
+Refer to https://github.com/SMART-TTS/SMART-G2P.
+
 # SMART-G2P
 
 SMART-G2P는 code-mixed G2P를 위한 한국어 발음변환 모듈로, 2021년도 과학기술통신부의 재원으로 정보통신기획평가원(IITP)의 지원을 받아 수행한 "소량 데이터만을 이용한 고품질 종단형 기반의 딥러닝 다화자 운율 및 감정 복제 기술 개발" 과제의 일환으로 공개된 코드입니다. 본 모델의 특징은 다음과 같습니다.
