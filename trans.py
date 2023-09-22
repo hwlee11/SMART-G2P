@@ -4,11 +4,11 @@ import hanja
 import mecab
 mecab = mecab.MeCab()
 
-from infer import transformer_transliteration as tft
-from utils import decide_acronym, read_acronym
-from utils import readNumberKor, readNumberEng, readNumber, readBigNum, readOnlyNum
-from utils import dataset, small, big, real_latin
-from utils import puncs, symbols, sym_han, sym_pro, count_symbols, count_sym_han
+from text.korean.SMARTG2P.infer import transformer_transliteration as tft
+from text.korean.SMARTG2P.utils import decide_acronym, read_acronym
+from text.korean.SMARTG2P.utils import readNumberKor, readNumberEng, readNumber, readBigNum, readOnlyNum
+from text.korean.SMARTG2P.utils import dataset, small, big, real_latin
+from text.korean.SMARTG2P.utils import puncs, symbols, sym_han, sym_pro, count_symbols, count_sym_han
 
 ## Dictionary from https://github.com/muik/transliteration/tree/master/data/source
 dataset = dataset()
@@ -270,7 +270,8 @@ g2p = G2p()
 def mixed_g2p(sentence,
               out_type='eng'):
     if out_type == 'kor':
-        return g2p(trans(sentence))
+        #return g2p(trans(sentence))
+        return g2p(sentranslit(sentence))
     else:
         return runKoG2P(sentence,'KoG2P/rulebook.txt')
 

@@ -12,7 +12,7 @@ import hgtk
 #torch.cuda.manual_seed(1488)
 
 graphemes = ['PAD', 'SOS'] + list('abcdefghijklmnopqrstuvwxyz.\'-') + ['EOS']
-with open('symbols.txt', 'r', encoding='UTF8') as f:
+with open('text/korean/SMARTG2P/symbols.txt', 'r', encoding='UTF8') as f:
     phonemes = ['PAD', 'SOS'] + f.read().strip().split('\n') + ['EOS']
 
 g2idx = {g: idx for idx, g in enumerate(graphemes)}
@@ -100,29 +100,32 @@ class TransformerModel(nn.Module):
 INPUT_DIM = len(graphemes)
 OUTPUT_DIM = len(phonemes)
 
-import os
-os.environ["CUDA_VISIBLE_DEVICES"]='1'
-#device = torch.device('cpu')
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = TransformerModel(INPUT_DIM, OUTPUT_DIM, hidden=128, enc_layers=3, dec_layers=1).to(device)
-model.load_state_dict(torch.load("transliteration.pt"))
-#model.to(device)
-#model.eval()
-
-#random.seed(1488)
-#torch.manual_seed(1488)
-#torch.cuda.manual_seed(1488)
 
 def transformer_transliteration(text):
+
+    import os
+    os.environ["CUDA_VISIBLE_DEVICES"]='0'
+    #device = torch.device('cpu')
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    print('load g2p model')
+    g2pmodel = TransformerModel(INPUT_DIM, OUTPUT_DIM, hidden=128, enc_layers=3, dec_layers=1).to(device)
+    g2pmodel.load_state_dict(torch.load("text/korean/SMARTG2P/transliteration.pt"))
+    #model.to(device)
+    #model.eval()
+
+    #random.seed(1488)
+    #torch.manual_seed(1488)
+    #torch.cuda.manual_seed(1488)
+
     src = torch.tensor(g2seq(text)).unsqueeze(1).cuda()
-    memory = model.transformer.encoder(model.pos_encoder(model.encoder(src)))
+    memory = g2pmodel.transformer.encoder(g2pmodel.pos_encoder(g2pmodel.encoder(src)))
 
     out_indexes = [p2idx['SOS'], ]
 
     for i in range(50):
         trg_tensor = torch.LongTensor(out_indexes).unsqueeze(1).to(device)
 
-        output = model.fc_out(model.transformer.decoder(model.pos_decoder(model.decoder(trg_tensor)), memory))
+        output = g2pmodel.fc_out(g2pmodel.transformer.decoder(g2pmodel.pos_decoder(g2pmodel.decoder(trg_tensor)), memory))
         out_token = output.argmax(2)[-1].item()
         out_indexes.append(out_token)
         if out_token == p2idx['EOS']:
